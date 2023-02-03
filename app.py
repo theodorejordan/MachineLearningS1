@@ -10,37 +10,7 @@ def normalize(data):
     std = np.std(data)
     return (data - mean) / std
 
-def rotate_cov(A, theta):
-    R = np.array([[np.cos(theta), -np.sin(theta)],
-                  [np.sin(theta), np.cos(theta)]])
-    return R @ A @ R.T
-
-def make_gaussian_blobs(means, covs, Ns = 100, seed = 42):
-    ''' Create different blobs, each blob being a gaussian 
-        from given mean and covariance
-    '''
-    rs = RandomState(MT19937(SeedSequence(seed)))
-    M = min(len(means), len(covs))
-
-    if not isinstance(Ns, list):
-        aux = [Ns for _ in range(M)]
-        Ns = aux
-    X = np.concatenate([rs.multivariate_normal(m,
-                                               cov = S,
-                                               size = N)
-                        for m, S, N in zip(means, covs, Ns)
-                        ],
-                       axis=0)
-    Y = []
-
-    for i, N in enumerate(Ns):
-        Y += [i]*N
-
-    Y = np.array(Y).ravel()
-
-    return X, Y
-
-def main():
+def testGradientDescent():
     X = np.array([32.50234527, 53.42680403, 61.53035803, 47.47563963, 59.81320787,
            55.14218841, 52.21179669, 39.29956669, 48.10504169, 52.55001444,
            45.41973014, 54.35163488, 44.1640495 , 58.16847072, 56.72720806,
@@ -57,40 +27,50 @@ def main():
     gd = GradientDescent()
     b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = False)
     
-    # Y_pred = theta * X + b
-    # print(theta, " ", b)
-    
-    np.random.seed(1)
+    Y_pred = theta * X + b
+    print(theta, " ", b)
 
-    # Generate 150 samples of 4-dimensional data
-    data = np.random.randn(150, 2)
-    
-    # print(data)
-    
-    means = np.array([[0, 2], [1, -1]])
-    covs = [rotate_cov(np.array([[1, 0.9],
-                                [0.9, 1]]),np.pi/180*30),
-            rotate_cov(np.array([[1, 0.2],
-                                [0.2, 1]]),np.pi/180*0)
-    ]
-    X, Y = make_gaussian_blobs(means, covs, Ns = [100, 100], seed = 42)
+def testLDA():
 
-    fig, ax = plt.subplots(1,1, figsize = (7,7))
-    ax.scatter(X[:,0], X[:,1], c = Y)
+    # Training Set
+    mean1 = [0, 0]
+    cov1 = [[1, 0], [0, 1]]
+    class1 = np.random.multivariate_normal(mean1, cov1, 100)
+
+    mean2 = [6, 6]
+    cov2 = [[1, 0], [0, 1]]
+    class2 = np.random.multivariate_normal(mean2, cov2, 100)
     
-    # print(X[:100])
-    # print(len(X[:100, 0]))
-    # print(X[:,1][50:])
-    print(Y)
-    testPoint = [4, -2]
+    X_train = np.concatenate((class1, class2), axis=0)
+    y_train = np.concatenate((np.zeros(100), np.ones(100)))
     
-    lda = LDA(X[:100], X[100:], len(X))
+    # Testing Set
+    mean1 = [1, 1]
+    cov1 = [[1, 0], [0, 1]]
+    class1 = np.random.multivariate_normal(mean1, cov1, 50)
+
+    mean2 = [3, 3]
+    cov2 = [[1, 0], [0, 1]]
+    class2 = np.random.multivariate_normal(mean2, cov2, 50)
+
+    X_test = np.concatenate((class1, class2), axis=0)
+    y_test = np.concatenate((np.zeros(50), np.ones(50)))
+    
+    lda = LDA(X_train[:100], X_train[100:])
     lda.generate_parameters()
-    cl = lda.getClass(testPoint)
-    print(cl)
     
-    ax.scatter(testPoint[0], testPoint[1], color = 'yellow' if cl == 1 else 'purple')
+    for i in range(len(X_test)):
+        el = X_test[i]
+        cl = lda.getClass(el)
+        y_test[i] = cl
+        
+    plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='rainbow')
+    plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap='rainbow', marker='x')
+
     plt.show()
+    
+def main():
+    testLDA()
     
 if __name__=="__main__":
     main()
