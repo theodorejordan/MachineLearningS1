@@ -31,7 +31,6 @@ def testGradientDescent():
     print(theta, " ", b)
 
 def testLDA():
-
     # Training Set
     mean1 = [0, 0]
     cov1 = [[1, 0], [0, 1]]
@@ -45,27 +44,17 @@ def testLDA():
     y_train = np.concatenate((np.zeros(100), np.ones(100)))
     
     # Testing Set
-    mean1 = [1, 1]
+    mean1 = [3, 3]
     cov1 = [[1, 0], [0, 1]]
-    class1 = np.random.multivariate_normal(mean1, cov1, 50)
-
-    mean2 = [3, 3]
-    cov2 = [[1, 0], [0, 1]]
-    class2 = np.random.multivariate_normal(mean2, cov2, 50)
-
-    X_test = np.concatenate((class1, class2), axis=0)
-    y_test = np.concatenate((np.zeros(50), np.ones(50)))
+    classTest = np.random.multivariate_normal(mean1, cov1, 50)
     
-    lda = LDA(X_train[:100], X_train[100:])
-    lda.generate_parameters()
+    lda = LDA()
+    lda.fit(X_train[:100], X_train[100:])
     
-    for i in range(len(X_test)):
-        el = X_test[i]
-        cl = lda.getClass(el)
-        y_test[i] = cl
+    y_test = lda.testClass(classTest)
         
     plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='rainbow')
-    plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap='rainbow', marker='x')
+    plt.scatter(classTest[:, 0], classTest[:, 1], c=y_test, cmap='rainbow', marker='x')
 
     plt.show()
     
