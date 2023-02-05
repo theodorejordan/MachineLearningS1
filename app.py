@@ -4,6 +4,17 @@ import pandas as pd
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
+from sklearn.datasets import load_boston
+
+boston = load_boston()
+"""
+X = boston.data[:, [5]].T
+Y = boston.target
+    
+print(X)
+print(Y)
+"""
+
 
 from GradientDescent import GradientDescent
 from LDA import LDA
@@ -31,6 +42,30 @@ def testGradientDescent():
     b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = False)
     
     Y_pred = theta * X + b
+
+
+def testGradientDescentBoston():
+
+    X = boston.data[:, [5]].T
+    Y = boston.target
+    
+    X = X[0]
+    
+    print(X)
+    print("")
+    print(Y)
+    
+    gd = GradientDescent()
+    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = True)
+    
+    Y_pred = theta * X + b
+    print(theta, " ", b) 
+    
+    plt.scatter(X, Y)
+    plt.plot(X, Y_pred, color='red')
+    plt.show()
+    
+  
 
 def testLDA():
     # Training Set
@@ -89,6 +124,10 @@ def main():
 
     # Print the accuracy
     print("Accuracy:", accuracy)
+    
+    
+    testGradientDescentBoston()
+    
     
 if __name__=="__main__":
     main()
