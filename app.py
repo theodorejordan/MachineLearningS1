@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
 
-from numpy.random import MT19937, RandomState, SeedSequence
 from GradientDescent import GradientDescent
 from LDA import LDA
 
@@ -28,7 +31,6 @@ def testGradientDescent():
     b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = False)
     
     Y_pred = theta * X + b
-    print(theta, " ", b)
 
 def testLDA():
     # Training Set
@@ -59,7 +61,34 @@ def testLDA():
     plt.show()
     
 def main():
-    testLDA()
+    # Load the data from a file into a pandas dataframe
+    df = pd.read_csv("heart.csv")
+    
+    label_encoder = LabelEncoder()
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = label_encoder.fit_transform(df[col])
+
+    # Split the data into features (X) and target labels (y)
+    X = df.iloc[:, :-1].values
+    y = df.iloc[:, -1].values
+
+    # Train the LDA model on the data
+    clf = LinearDiscriminantAnalysis()
+    clf.fit(X, y)
+
+    # Make predictions for all the data points
+    predictions = clf.predict(X)
+
+    correct_predictions = 0
+    for i in range(len(y)):
+        if y[i] == predictions[i]:
+            correct_predictions += 1
+
+    accuracy = correct_predictions / len(y)
+
+    # Print the accuracy
+    print("Accuracy:", accuracy)
     
 if __name__=="__main__":
     main()
