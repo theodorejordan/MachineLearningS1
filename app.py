@@ -7,16 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import load_boston
-
-boston = load_boston()
-"""
-X = boston.data[:, [5]].T
-Y = boston.target
-    
-print(X)
-print(Y)
-"""
-
 from GradientDescent import GradientDescent
 from LDA import LDA
 
@@ -40,27 +30,39 @@ def testGradientDescent(show):
     Y = normalize(Y)
     
     gd = GradientDescent()
-    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = show)
+    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.0000000000001, show = show)
     
     Y_pred = theta * X + b
-
+    
+    plt.scatter(X, Y)
+    plt.plot(X, Y_pred, color='red')
+    plt.show()
 
 def testGradientDescentBoston():
+    boston = load_boston()
 
     X = boston.data[:, [5]].T
     Y = boston.target
     
     X = X[0]
     
-    print(X)
-    print("")
-    print(Y)
-    
     gd = GradientDescent()
-    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = True)
+    b, theta = gd.gradient_descent(X, Y, rate=0.001, num_iterations=2000, threshold = 0.0000001, show = True)
     
     Y_pred = theta * X + b
-    print(theta, " ", b) 
+    
+    plt.scatter(X, Y)
+    plt.plot(X, Y_pred, color='red')
+    plt.show()
+
+def gradient_descent(X, Y, show):
+    X = normalize(X)
+    Y = normalize(Y)
+    
+    gd = GradientDescent()
+    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.0000001, show = show)
+    
+    Y_pred = theta * X + b
     
     plt.scatter(X, Y)
     plt.plot(X, Y_pred, color='red')
@@ -123,7 +125,6 @@ def testLCAWithCSV(csv_file):
 
     # Print the accuracy
     print("Accuracy:", accuracy)
-    
     
 def testKNNWithCSV(csv_file):
     # Load the data from a CSV file into a pandas dataframe
@@ -218,7 +219,7 @@ def testRandomForestWithCsv(csv_file):
     plt.show()
     
 def main():
-   testLDA()
+   testGradientDescentBoston()
     
 if __name__=="__main__":
     main()
