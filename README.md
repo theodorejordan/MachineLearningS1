@@ -1,15 +1,15 @@
 # Readme for Gradient Descent and LDA Implementation
 
-This repository contains code for implementing gradient descent for linear regression and linear discriminant analysis (LDA) for classification. The code was written in the context of a machine learning course.
+This repository contains code for implementing gradient descent for linear regression and linear discriminant analysis (LDA) for classification. The code was written in the context of a machine learning course at Univeristy Paris Dauphine.
 
 ## Requirements
 
 The following python libraries are required to run the code:
 
-Numpy
-Matplotlib
-Pandas
-Sklearn
+- Numpy
+- Matplotlib
+- Pandas
+- Sklearn
 
 ## Gradient Descent
 
@@ -25,3 +25,7 @@ The testLDA method demonstrates how to use the LDA class to classify a simple tw
 
 ## Usage
 To use the code, simply run the desired test method (e.g., testGradientDescent, testGradientDescentBoston, testLDA). The methods include all necessary imports and provide examples of how to use the implemented classes.
+
+You should call the gradient_descent function with the right argument to use the gradient descent algorithm. And the LDA method to use the LDA algorithm.
+
+Done by Julie Bachelet and Theodore Jordan.
