@@ -36,7 +36,7 @@ class GradientDescent:
             
             theta, b = self.update_t_b(X, Y, pred, theta, b, rate)
             
-            if(i%10==0):
+            if(i % 10 == 0):
                 iterations.append([i, cost])
             
             iter += 1

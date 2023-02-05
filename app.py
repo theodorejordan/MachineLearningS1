@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import load_boston
 
 boston = load_boston()
@@ -24,7 +26,7 @@ def normalize(data):
     std = np.std(data)
     return (data - mean) / std
 
-def testGradientDescent():
+def testGradientDescent(show):
     X = np.array([32.50234527, 53.42680403, 61.53035803, 47.47563963, 59.81320787,
            55.14218841, 52.21179669, 39.29956669, 48.10504169, 52.55001444,
            45.41973014, 54.35163488, 44.1640495 , 58.16847072, 56.72720806,
@@ -39,7 +41,7 @@ def testGradientDescent():
     Y = normalize(Y)
     
     gd = GradientDescent()
-    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = False)
+    b, theta = gd.gradient_descent(X, Y, rate=0.01, num_iterations=2000, threshold = 0.00000000001, show = show)
     
     Y_pred = theta * X + b
 
@@ -94,10 +96,10 @@ def testLDA():
     plt.scatter(classTest[:, 0], classTest[:, 1], c=y_test, cmap='rainbow', marker='x')
 
     plt.show()
-    
-def main():
+
+def testLCAWithCSV(csv_file):
     # Load the data from a file into a pandas dataframe
-    df = pd.read_csv("heart.csv")
+    df = pd.read_csv(csv_file)
     
     label_encoder = LabelEncoder()
     for col in df.columns:
@@ -128,6 +130,101 @@ def main():
     
     testGradientDescentBoston()
     
+    
+def testKNNWithCSV(csv_file):
+    # Load the data from a CSV file into a pandas dataframe
+    df = pd.read_csv(csv_file)
+    
+    label_encoder = LabelEncoder()
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = label_encoder.fit_transform(df[col])
+
+    # Split the data into features (X) and target labels (y)
+    X = df.iloc[:, :-1].values
+    y = df.iloc[:, -1].values
+
+    # Define the range of number of neighbors to consider
+    k_range = range(1, 20)
+
+    # Define the range of training set sizes to consider
+    training_set_sizes = [0.2, 0.35, 0.5]
+
+    # Create a list to store the accuracy scores
+    accuracy_scores = []
+
+    # Loop through each training set size
+    for training_set_size in training_set_sizes:
+        temp_accuracy_scores = []
+
+        # Split the data into training and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=training_set_size, random_state=0)
+
+        # Calculate the number of samples to include in the training set
+        num_samples = int(training_set_size * X_train.shape[0])
+
+        # Loop through each number of neighbors
+        for k in k_range:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train[:num_samples], y_train[:num_samples])
+            temp_accuracy_scores.append(knn.score(X_test, y_test))
+
+        accuracy_scores.append(temp_accuracy_scores)
+
+    # Plot the accuracy scores for each number of neighbors and each training set size
+    for i, accuracy_score in enumerate(accuracy_scores):
+        plt.plot(k_range, accuracy_score, label='Training set size: {:.0%}'.format(training_set_sizes[i]))
+
+    # Add labels and title to the plot
+    plt.xlabel('Number of neighbors')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy of k-NN classifier with different training set sizes')
+    plt.legend()
+    plt.show()
+    
+def testRandomForestWithCsv(csv_file):
+    # Load the data from a CSV file into a pandas dataframe
+    df = pd.read_csv(csv_file)
+    
+    label_encoder = LabelEncoder()
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = label_encoder.fit_transform(df[col])
+
+    # Split the data into features (X) and target labels (y)
+    X = df.iloc[:, :-1].values
+    y = df.iloc[:, -1].values
+
+    test_sizes = [0.1, 0.2, 0.3, 0.4, 0.5]
+    accuracies = []
+
+    # Loop through different test sizes
+    for test_size in test_sizes:
+        # Split the data into training and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+
+        # Create a Random Forest Classifier
+        clf = RandomForestClassifier()
+
+        # Fit the model on the training data
+        clf.fit(X_train, y_train)
+
+        # Predict on the test data
+        y_pred = clf.predict(X_test)
+
+        # Evaluate the accuracy of the model
+        accuracy = clf.score(X_test, y_test)
+        accuracies.append(accuracy)
+
+    # Plot the accuracy scores
+    plt.plot(test_sizes, accuracies)
+    plt.xlabel("Test Size")
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy vs Test Size")
+    plt.show()
+    
+def main():
+   testGradientDescentBoston();
     
 if __name__=="__main__":
     main()
