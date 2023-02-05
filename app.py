@@ -153,7 +153,7 @@ def testKNNWithCSV(csv_file):
     k_range = range(1, 50)
 
     # and on different value of size for the training set
-    trainingSizes = [0.2, 0.30, 0.40, 0.50]
+    trainingSizes = [0.20, 0.40, 0.60, 0.80]
     accuracies = []
 
     for training_size in trainingSizes:
@@ -213,7 +213,7 @@ def testRandomForestWithCsv(csv_file):
     plt.show()
     
 def main():
-   testRandomForestWithCsv("heart.csv")
+   testKNNWithCSV("heart.csv")
     
 if __name__=="__main__":
     main()
