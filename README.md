@@ -1,4 +1,4 @@
-# Readme for Gradient Descent and LDA Implementation
+# Gradient Descent and LDA Implementation
 
 This repository contains code for implementing gradient descent for linear regression and linear discriminant analysis (LDA) for classification. The code was written in the context of a machine learning course at Univeristy Paris Dauphine.
 
