@@ -17,7 +17,6 @@ print(X)
 print(Y)
 """
 
-
 from GradientDescent import GradientDescent
 from LDA import LDA
 
@@ -66,8 +65,6 @@ def testGradientDescentBoston():
     plt.scatter(X, Y)
     plt.plot(X, Y_pred, color='red')
     plt.show()
-    
-  
 
 def testLDA():
     # Training Set
@@ -126,9 +123,6 @@ def testLCAWithCSV(csv_file):
 
     # Print the accuracy
     print("Accuracy:", accuracy)
-    
-    
-    testGradientDescentBoston()
     
     
 def testKNNWithCSV(csv_file):
@@ -224,7 +218,7 @@ def testRandomForestWithCsv(csv_file):
     plt.show()
     
 def main():
-   testGradientDescentBoston();
+   testLDA()
     
 if __name__=="__main__":
     main()
